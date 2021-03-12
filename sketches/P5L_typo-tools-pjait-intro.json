@@ -1,0 +1,16 @@
+{
+  "version": "1.3.5",
+  "revision": 40,
+  "count": {
+    "sketches": 1,
+    "folders": 0
+  },
+  "structure": [
+    {
+      "name": "typo-tools-pjait-intro",
+      "mod": 1615513152783,
+      "type": "sketch",
+      "code": "let credits = {\n\t\"student_names\": \"first lastname, first lastname2\",\n\t\"tool_name\": \"name of your tool\",\n\t\"tool_info\": \"short description of your tool\"\n}\n\n\nlet font, points, fc = 0,\n\tgui = {}\n\nfunction preload() {\n\tfont = loadFont(\"includes/demos-data/fonts/RobotoMono-Regular.otf\")\n}\n\nfunction setup() {\n\tcreateCanvas(windowWidth, windowHeight)\n\ttextAlign(CENTER, CENTER)\n\tnoSmooth()\n\tfill(255)\n\tgenType('TYPO', width / 3);\n\tgenGUI()\n\twindowResized = function() {\n\t\tresizeCanvas(windowWidth, windowHeight)\n\t\tposGUI()\n\t}\n}\n\nfunction draw() {\n\tfc += gui.rotSpeed.value()\n\tbackground(0, gui.bgAlpha.value())\n\ttextSize(gui.textSize.value())\n\n\ttranslate(width / 2, height / 2)\n\tfor(let i = 0; i < points.length; i += gui.gap.value()) {\n\t\tlet p = points[i];\n\n\t\tif(round(i * .2 + frameCount * .05) % gui.skip.value() == 0) {\n\t\t\tlet offset = (i * gui.offset.value() + frameCount * gui.offset.value() * .25) % 5\n\t\t\tpush()\n\t\t\ttranslate(p.x + offset, p.y + offset)\n\t\t\trotate(radians(i * gui.rot.value() + fc))\n\t\t\ttext('TOOLS', 0, 0);\n\t\t\tpop()\n\t\t}\n\t}\n}\n\nfunction genGUI() {\n\tgui.textSize = createSlider(3, 10, 10, .1)\n\tgui.gap = createSlider(1, 10, 1)\n\tgui.skip = createSlider(1, 10, 2)\n\tgui.offset = createSlider(0, .9, .3, .01)\n\tgui.rot = createSlider(0, 45, 0, .01)\n\tgui.rotSpeed = createSlider(0, 5, 0, .1)\n\tgui.bgAlpha = createSlider(0, 255, 255, 5)\n\tgui.export = createButton('EXPORT')\n\tgui.export.mousePressed(function() {\n\t\tsave('typo-tools.png')\n\t})\n\tposGUI()\n}\n\nfunction posGUI() {\n\tlet c = 0\n\tfor(let g in gui) {\n\t\tif(g == 'export') {\n\t\t\tc++\n\t\t}\n\t\tgui[g].position(width - 125, 80 + c * 20)\n\t\tgui[g].size(100)\n\t\tc++\n\t}\n}\n\nfunction genType(txtString, txtSize) {\n\t// grab bounding box of text \n\tlet bounds = font.textBounds(txtString, 0, 0, txtSize)\n\n\t// textToPoints(txt, x, y, size, options) \n\tpoints = font.textToPoints(txtString, -bounds.w / 2, bounds.h / 2, txtSize, {\n\t\tsampleFactor: .07, // (default=.1), higher = more points \n\t\tsimplifyThreshold: 0 // if not 0, collinear points are removed from the polygon \n\t})\n}"
+    }
+  ]
+}

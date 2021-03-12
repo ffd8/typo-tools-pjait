@@ -1,0 +1,1556 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>TYPO-TOOLS</title>
+	<meta charset="utf-8">
+	<meta name="description" content="typo-tools created during Creat[l]ive-Coding workshop. Coded with p5.js via P5LIVE.">
+
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-title" content="REACTIVE–RECODE">
+	<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1">
+
+
+	<script type="text/javascript">
+		// update sketches list here!
+		var sketchesList = [
+			'P5L_typo-tools-pjait-intro'
+		]
+	</script>
+
+
+
+
+
+	<!-- Style -->
+	<link rel="stylesheet" type="text/css" media="all" href="style.css?8">
+	<style type="text/css">
+		#p5-console{
+			display:none;
+		}
+		#p5-info, #p5-info-bg{
+			position:fixed;
+			z-index:9999;
+			width:100vw;
+			height:100vh;
+			box-sizing: border-box;
+
+		}
+		#p5-info-content a{
+			color:#fff;
+
+		}
+		.p5-top{
+			position:fixed;
+			width:250px;
+			z-index:999;
+			/*background:#000;*/
+		}
+		.scroll_content{
+			position:fixed;
+			top:100px;
+			width:250px;
+			height:calc(100vh - 100px);
+			overflow:auto;
+		}
+		.p5-header{
+			font-size:30pt;
+			line-height:32px;
+			cursor:pointer;
+			color:#fff;
+			font-weight:400;
+			mix-blend-mode: difference;
+			-webkit-text-stroke-width: 1px;
+   			-webkit-text-stroke-color: black;
+		}
+		#p5-showinfo{
+			position:fixed;
+			top:0;
+			left:0;
+			z-index:9999;
+			color:#fff;
+			padding:5px;
+			opacity:.5;
+			cursor:pointer;
+
+		}
+		#p5-showinfo:hover{
+			opacity: 1;
+		}
+		#p5-info-content{
+			position:fixed;
+			left:0;
+			width:250px;
+			height:100vh;
+			z-index:9999;
+			font-size:10pt;
+			color:#fff;
+			text-align:left;
+		}
+		#p5-info-desc{
+			padding:5px;
+		}
+		#p5-info-holder{
+			position:absolute;
+			height:100%;
+			overflow:auto;
+		}
+		#p5-info-code{
+			background:none;
+			width:100%;
+			height:100%;
+			outline:none;
+			border:none;
+			color:#fff;
+			border:1px solid #fff;
+			padding:10px;
+			display:none;
+		}
+		#p5-editor{
+			position:fixed;
+			left:250px;
+			height:100vh;
+			z-index:9999;
+			overflow:hidden;
+			border:none;
+			padding:10px;
+		}
+		#p5-code{
+			top:0px;
+			height:100%;
+			width:100%;
+		}
+		#p5-buttons{
+			position:fixed;
+			z-index:9999;
+			top:5px;
+			right:0px;
+		}
+		#moreinfo-contents{
+			margin-bottom:15px;
+		}
+		.p5-button{
+			font-size:15pt;
+			border:1px solid #444;
+			padding:5px;
+			opacity: .75;
+			cursor:pointer;
+			float:left;
+			margin-right:10px;
+			background:#000;
+		}
+		.p5-button:hover{
+			opacity: 1;
+		}
+		#p5-recompile:hover{
+			opacity: 1;
+		}
+		#p5-info-sketches{
+			width:100%;
+			/*overflow-x:hidden;*/
+			/*overflow-y:auto;*/
+		}
+		.p5-info-sketch{
+			margin: 5px 0 5px 0;
+			width:100%;
+			height:auto;
+			min-height:75px;
+			padding:5px 0 5px 0;
+			background-size:cover;
+			background-position: center;
+			opacity:.8;
+			cursor:pointer;
+		}
+		.p5-info-sketch:hover{
+			opacity: 1;
+		}
+		.p5-info-sketch .sketch-image, .p5-info-sketch .sketch-details{
+			display:none;
+		}
+		/*.p5-info-sketch-viewed{
+			opacity:.5;
+			background:#fff;
+			color:#000;
+		}*/
+		.p5-info-sketch-sel{
+			opacity:1;
+			background:#222 !important; /* 0018AB */
+			border-top:2px solid #fff;
+			border-bottom:2px solid #fff;
+		}
+		.p5-info-sketch-sel .sketch-image, .p5-info-sketch-sel .sketch-details{
+			display:block;
+		}
+		.sketch-image{
+			margin-top:5px;
+			width:100%;
+			max-height:400px;
+		}
+		.subhead:first-child{
+			margin-top:0;
+		}
+		.subhead{
+			margin-top:10px;
+			font-size:8pt;
+			font-weight:400;
+		}
+		#p5-info-bg{
+			position:fixed;
+			top:0;
+			left:0;
+			z-index:9998;
+			background:#000;
+			opacity:1;
+			padding:0px;
+			width:255px;
+		}
+		#moreinfo{
+			text-decoration: underline;
+			cursor:pointer;
+		}
+
+		/*drag+drop support*/
+		#p5-drop{
+			position:fixed;
+			width:100vw;
+			height:100vh;
+			opacity:.5;
+			background:#00ff00;
+			z-index:99999;
+			display:none;
+			pointer-events: none;
+		}
+		.dz-preview{
+			display:none !important;
+		}
+	</style>
+	<script src="includes/js/loopBreaker.min.js"></script>
+</head>
+<body>
+	<div id="p5-drop"> </div>
+
+	<div id="loader">
+		<div id="loader-msg">
+			P5LIVE
+			<div id="loader-sub">TYPO-TOOLS</div>
+		</div>
+		<div class="lds-dual-ring"></div>
+		<div id="loader-bg"> </div>
+	</div>
+
+	<div id="p5-showinfo" class="p5-header" onclick="toggleInfo();">
+		&#x3C;&#x3E;
+	</div>
+
+	<div id="p5-info">
+		<div id="p5-info-bg"></div>
+		<div id="p5-info-content">
+			<div id="p5-info-holder" >
+				<div id="p5-info-desc" class="scroller">
+					<div class="p5-top">
+						<span class="p5-header" onclick="toggleInfo();">&#x3C;TYPO-TOOLS&#x3E;</span>
+						<br><span onclick="toggleInfo();">(click to hide / CTRL + E)</span>
+					</div>
+
+					<div class="scroll_content scroller" >
+						<a href="https://workshopsnema.editorx.io/futuretext/creat-l-ive-coding" target="_blank">CREAT[L]IVE CODING</a><br>
+						<a href="https://workshopsnema.editorx.io/futuretext/interactive-design" target="_blank">PJAIT NEMA WORKSHOPS 2021</a><br>
+						LECTURER: <a href="https://teddavis.org" target="_blank">TED DAVIS</a><br><br>
+						Following 2+ days of inputs using p5.js for typography, students created their own sketches, combining GUI elements » custom TYPO-TOOLS! <br>
+						Coded with <a href="http://p5js.org/" target="_blank">p5.js</a> via <a href="https://p5live.org" target="_blank">P5LIVE</a>.
+						<br><br>
+						<a id="moreinfo" onclick="showmore();">Read more...</a>
+						<br><br>
+						<div id="moreinfo-contents" style="display:none;">
+							Playground<br>
+							----------<br>
+							All sketches are remixable! Modify the code (auto-compiles if bug-free, or press 'RECOMPILE'). Changes are temporary and reset when changing sketches.
+
+							<br><br>Want to remix further? <br>Copy and paste code into <br><a href="https://p5live.org">P5LIVE</a> to save changes.<br><br>
+
+							Shortcuts:<br>
+							CTRL + ENTER » Recompile<br>
+							CTRL + E » Toggle menu
+							<br><br>
+
+							Background<br>
+							----------<br>
+							This workshop introduces participants to the realm of possibilities in generating designs by live coding as a technique of sketching. From iterative changes with instantaneous feedback, shapes, motion, typography can all be explored in ways that typical software packages can't provide. Using p5.js via P5LIVE, we'll learn the basics of creative coding, turn type into anchor points, and develop visuals by manipulating these coordinates with new geometric forms and motion. Finally we'll learn to control parameters with graphical user interface (GUI) elements, such as sliders, to create custom tools for our own usage and the public to explore. This workshop is given as live technical inputs, collaborative coding sessions, partner discussions and a shared output.
+
+							<br><br>
+
+						</div>
+						<div>TOOLS</div>
+						<div id="p5-info-sketches">
+
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+				<div id="p5-editor">
+					<div id="p5-buttons">
+						<div id="p5-hide" style="display:none;" class="p5-button" onclick="toggleInfo()">HIDE</div>
+						<div id="p5-recompile" class="p5-button" onclick="recompile()">RECOMPILE</div>
+						<!-- <div id="p5-export" class="p5-button" onclick="exportSketch()">EXPORT</div> -->
+					</div>
+
+					<pre id="p5-code" autofocus class="p5-ta"></pre>
+					<textarea id="p5-console" class="p5-ta" disabled></textarea>
+				</div>
+
+		</div>
+
+	</div>
+
+	<iframe id="p5-frame" sandbox="allow-same-origin allow-scripts allow-downloads allow-pointer-lock" srcdoc="" ></iframe>
+	<div id="p5-frame-cover"></div>
+
+<textarea style="display:none;" id="p5-template">
+function setup() {
+	createCanvas(windowWidth, windowHeight);
+
+}
+
+function draw() {
+
+}</textarea>
+<textarea style="display:none;" id="p5-custom">
+/* CUSTOM FUNCTIONS FOR P5LIVE */
+// keep fullscreen if window resized
+function windowResized() {
+	resizeCanvas(windowWidth, windowHeight);
+}
+
+// custom ease function
+function ease(iVal, oVal, eVal){
+	return oVal += (iVal - oVal) * eVal;
+}
+
+// processing compatibility
+function println(msg){
+	print(msg);
+}
+</textarea>
+
+	<!-- Scripts -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js" type="text/javascript" charset="utf-8"></script>
+	<script src="includes/js/beautify.js"></script>
+
+	<script type="text/javascript">
+
+
+
+		/*
+			TODO
+
+			PRIORITY
+			------------
+			- drag + drop code for testing
+
+
+			SECONDARY
+			------------
+			- extract credits
+			- only set editor code between RECODE section
+			- menu
+				- pulldown to select sketch
+				- toggle code (mousemove / button / overlay)
+				- refresh (recompile)
+				-
+			- cleanup unused code
+			- intro page
+			-
+
+		*/
+
+		'use strict'
+
+		/* INIT */
+		let currentRevision = 37;
+
+		// init vars
+		let p5editor = document.getElementById('p5-editor'),
+		p5code = document.getElementById('p5-code'),
+		p5console = document.getElementById('p5-console'),
+		p5custom = document.getElementById('p5-custom'),
+		p5template = document.getElementById('p5-template').value,
+		p5frame = document.getElementById('p5-frame'),
+		p5frameCover = document.getElementById('p5-frame-cover'),
+		p5f = p5frame.contentWindow,
+		p5script = document.getElementById('holdscript'),
+		loader = document.getElementById('loader'),
+		loaderSub = document.getElementById('loader-sub'),
+		shortcutRecording = false,
+		menuVisible = false, refVisible = false, settingsVisible = false,
+		validCode = true, sketchesFirstTime = true,
+		sketchLoaded = false, forceRecompile = false,
+		pLen = '', paused = false,
+		markerID = [], errorTimer, consoleTimer, consoleVisible = false, braketError,
+		snippets, cocode, editorId, p5frameTemplate, p5htmlTemplate,
+		p5vars = {'frameCount':0, 'mouseX':0, 'mouseY':0}, newBG = '',
+		refList = [], downloadedRef = false, refScroll = 0, refSearch = '',
+		chars = 'abcdefghijklmnopqrstuvwxyz0123456789', // ABCDEFGHIJKLMNOPQRSTUVWXYZ
+		showNotify = false, navMouseOver = false,
+		curPos, curPositions = [], updateCursor, showCursors = false, notifyTimer,
+		demosLocked = true, autoCompleteExport = false,
+		syncdataEditor, syncdataPresets = [],
+		cocodingFirstTime = false, cocodingShowMic = false, cocodingUnload = false,
+		cocodingRecompile = false,
+		p5pop, p5popStream, p5popActive = false;
+
+		// custom SANDBOX
+		let sketches = [], curSketch = 0, psketch = 0, rSketch, vSketch = [], uploadPath = '',
+		p5liveWelcomeMsg = '/* \n\nWelcome to our P5LIVE SANDBOX!\n\nUPLOAD\n--------------\nDRAG + DROP P5LIVE exported .json sketches into this window to upload it!\nPlz use `yourName_shortDesc.json`, removing all timestamps, thx!\nNOTE: no undo = double check sketch + name before uploading.\n\nPLAY\n--------------\n« Click on any project to see sketch + code, enjoy and/or remix it!\nChanges are temporary, use "EXPORT" to save + import it to P5LIVE. \n\nOPEN SOURCE\n--------------\nSharing code = learn from each other, but don\'t copy each other.\nI have an evil-eye for spotting inspiration vs plagerism...\nso if you like someones code, be ready to radically change/own it.  \n\nEnjoy! \nTed\n\n*/'
+		;
+
+		// beautify!
+		var beautifyOptions = {
+			'indent_size': '1',
+			'indent_char': '\t',
+			'max_preserve_newlines': '5',
+			'preserve_newlines': true,
+			'keep_array_indentation': false,
+			'break_chained_methods': false,
+			'indent_scripts': 'normal',
+			'brace_style': 'collapse',
+			'space_before_conditional': false,
+			'unescape_strings': false,
+			'jslint_happy': false,
+			'end_with_newline': false,
+			'wrap_line_length': '0',
+			'indent_inner_html': false,
+			'comma_first': false,
+			'e4x': false
+		}
+
+		// init editor
+		// var Range = ace.require('ace/range').Range;
+		var editor = ace.edit('p5-code');
+		editor.setTheme("ace/theme/gob");
+		editor.session.setMode('ace/mode/javascript');
+		editor.setOptions({
+			showPrintMargin: false,
+			animatedScroll: false,
+			displayIndentGuides: false,
+			useWorker: true,
+			showLineNumbers: true,
+			showGutter: true,
+			tabSize: 4, useSoftTabs: false,
+
+		});
+		p5editor.style.visibility = 'visible';
+		p5code.style.fontSize = '12pt';
+
+		/* CMD-KEYS (remove key conflicts) */
+		editor.commands.removeCommands(['gotoright','movelinesup', 'movelinesdown', 'gotolinestart', 'splitline', 'gotolineend', 'golineup', 'jumptomatching', 'golinedown', 'transposeletters', 'find']);
+
+		// replace backspace w/o ctrl + h
+		editor.commands.addCommand({
+			name: 'backspace',
+			bindKey: { win: 'Shift-Backspace|Backspace', mac: 'Ctrl-Backspace|Shift-Backspace|Backspace' },
+			exec: function(e) { e.remove('left') },
+			multiSelectAction: 'forEach',
+			scrollIntoView: 'cursor'
+		});
+
+		// replace gotoright w/o ctrl + f
+		editor.commands.addCommand({
+			name: 'gotoright',
+			bindKey: { win: 'Right', mac: 'Right' },
+			exec: function(e,t) { e.navigateRight(t.times) },
+			multiSelectAction: 'forEach',
+			scrollIntoView: 'cursor',
+			readOnly:!0
+		});
+
+		// replace golineup w/o ctrl + p
+		editor.commands.addCommand({
+			name: 'golineup',
+			bindKey: { win: 'Up', mac: 'Up' },
+			exec: function(e,t) { e.navigateUp(t.times) },
+			multiSelectAction: 'forEach',
+			scrollIntoView: 'cursor',
+			readOnly:!0
+		});
+
+		// replace golinedown w/o ctrl + n
+		editor.commands.addCommand({
+			name: 'golinedown',
+			bindKey: { win: 'Down', mac: 'Down' },
+			exec: function(e,t) { e.navigateDown(t.times) },
+			multiSelectAction: 'forEach',
+			scrollIntoView: 'cursor',
+			readOnly:!0
+		});
+
+
+		// BACKGROUND ON CODE
+		editor.renderer.on('afterRender', function(){
+			adjustLines();
+		});
+
+		function adjustLines(){
+			var pcode = document.getElementsByClassName('ace_line');
+			for(var i=0; i < pcode.length; i++){
+				var pitem = pcode[i];
+				var pcontents = pitem.innerHTML;
+					pitem.innerHTML = '<span class="ace_line_bg" style="background:#112233;">' + pcontents + '</span>';
+			}
+		}
+
+		// editor.setOption("wrap", true)
+		let includeScripts = [{
+			'local':'includes/p5/p5.min.js',
+			'remote':'https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.min.js'
+		}, {
+			// 'local':'includes/p5/addons/p5.sound.min.js',
+			'remote':'https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.sound.js'
+		}];
+
+
+		/* p5 iframe communication */
+
+		// mark error line
+		window.document.addEventListener('p5Status', handleEvent, false)
+		function handleEvent(e) {
+			if(e.detail.lineNumber != undefined){
+				let errorLine = parseInt(e.detail.lineNumber)-1;
+				addMarker(errorLine);
+			}else{
+				removeMarkers()
+			}
+			// sketchloaded
+			if(e.detail.status){
+				sketchLoaded = true;
+			}else{
+				sketchLoaded = false;
+			}
+		}
+
+		function addMarker(n){
+			let elementPos = markerID.map(function(x) {return x.line; }).indexOf(n);
+			if (elementPos === -1) {
+				markerID.push({'line':n, 'id':editor.session.addMarker(new Range(n, 0, n, 7000), 'myMarker', 'fullLine')});
+			}
+		}
+
+		function removeMarkers(){
+			for(let i=0; i < markerID.length; i++){
+				editor.session.removeMarker(markerID[i].id);
+			}
+			markerID = [];
+		}
+
+		// set editor BG
+		editor.renderer.on('afterRender', function(){
+			adjustLines();
+		});
+
+
+		/* REACTIVE RECODE functions*/
+		function toggleInfo(){
+			let infodiv = document.getElementById('p5-info');
+			if(infodiv.style.display == 'none'){
+				infodiv.style.display = 'block';
+				editor.focus();
+			}else{
+				infodiv.style.display = 'none';
+			}
+		}
+
+		function showmore(){
+			let infoDiv = document.getElementById('moreinfo');
+			let infoDivContents = document.getElementById('moreinfo-contents');
+			if(infoDiv.innerHTML == "Read more..."){
+				infoDiv.innerHTML = "Read less...";//infoDivContents.innerHTML;
+				infoDivContents.style.display = 'block';
+			}else{
+				infoDiv.innerHTML = "Read more...";//infoDivContents.innerHTML;
+				infoDivContents.style.display = 'none';
+			}
+
+		}
+
+
+
+		/* SETTINGS */
+
+		// init settings
+		loadSettings();
+
+		// react to settings once gathered
+		function loadSettings(){
+			// var url = new URL(window.location.href);
+			// uploadPath = url.searchParams.get("sb");
+			// document.title += " /"+uploadPath
+			// document.getElementById('uploadpath').innerHTML = "/"+uploadPath;
+			//console.log(c);
+			loadSketchTemplate();
+			loadSketches(); // false
+			hideLoader();
+			if(window.location.hash){
+				// window.location.hash.substring(1)
+				loadSketch(window.location.hash.substring(1));
+			}else{
+				loadSketch(0);
+				// window.setTimeout(function(){
+				// 	document.getElementById('sketch_0').click();
+				// }, 500)
+			}
+		}
+
+		function compare( a, b ) {
+		  if ( a.credits.recode_year < b.credits.recode_year ){
+		    return -1;
+		  }
+		  if ( a.credits.recode_year > b.credits.recode_year ){
+		    return 1;
+		  }
+		  return 0;
+		}
+
+		function makeid(length) {
+		   var result           = '';
+		   var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+		   var charactersLength = characters.length;
+		   for ( var i = 0; i < length; i++ ) {
+		      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+		   }
+		   return result;
+		}
+
+		function loadSketches(){
+			for(var i=0; i<sketchesList.length; i++){
+				if(sketchesList[i] == ''){
+					break; // skip empty
+				}
+				let s = {};
+				s.fileName = sketchesList[i];
+				let randomID = makeid(5); // prevent cache on updated sketches!
+				let codeImport = importSketch('sketches/'+sketchesList[i]+'.json?'+randomID).structure[0].code;
+				let sketchCredits = codeImport;
+				// console.log(codeImport)
+				sketchCredits = sketchCredits.replace(/(?:\r\n|\r|\n|\t)/g, '');
+				var sketchLoadCreditsRegEx = /let credits\s+=\s+\{.*?\}/
+				var sketchLoadCredits = sketchLoadCreditsRegEx.exec(sketchCredits);
+				s.credits = {student_names:"",recode_artist:"",recode_title:"",recode_year:""}
+				if(sketchLoadCredits != undefined){
+					s.credits = JSON.parse(sketchLoadCredits[0].replace('let credits = ', ''));
+				}
+
+				s.code = codeImport.replace(/let credits\s+=\s+\{(.|\n)*?\}/, '').replace(/(.?\n)/, '');
+				sketches.push(s);
+			}
+			sketches = sketches.sort( compare );
+			// sketches.unshift(ts);
+
+			let sketchesHTML = '';
+			for(var i=1; i<sketches.length; i++){
+				let sketchBG = 'background-image:url(\'sketches/'+sketches[i].fileName+'.jpg\');';
+				let sHTML = '<div class="p5-info-sketch" id="sketch_'+i+'" style="'+sketchBG+'" onclick="loadSketch('+i+')">';
+					if(i > 0){
+						sHTML += '<div class="sketch-details">';
+						sHTML += '<div class="subhead">STUDENTS</div>'+sketches[i].credits.student_names+'<br>';
+						sHTML += '<div class="subhead">TITLE</div>'+sketches[i].credits.tool_name+'<br>';
+						sHTML += '<div class="subhead">INFO</div>'+sketches[i].credits.tool_info+'<br>';
+						sHTML += '<div class="subhead">THUMB</div><img class="sketch-image" src="sketches/'+sketches[i].fileName+'.jpg">';
+						sHTML += '</div>';
+					}
+					sHTML += '</div>';
+					sketchesHTML += sHTML;
+			}
+			document.getElementById('p5-info-sketches').innerHTML = sketchesHTML;
+		}
+
+		// function loadSketches(initList){
+		// 	if(initList){
+		// 		document.getElementById('p5-info-sketches').innerHTML = "";
+		// 		sketches = [];
+		// 		curSketch = 0;
+		// 		psketch = 0;
+		// 		vSketch = [];
+		// 	}
+
+		// 	var sketchesData = '../' + uploadPath + '/upload/contents.php?' + Math.floor(Math.random()*9999);
+		// 	var request = new XMLHttpRequest();
+		// 	request.open('GET', sketchesData, false);
+		// 	request.send();
+		// 	var jsonObj = JSON.parse(request.responseText);
+		// 	// console.log(jsonObj);
+		// 	let c = 0;
+		// 	let s = {};
+		// 	s.fileName = '';
+		// 	s.code = p5liveWelcomeMsg;
+		// 	sketches.push(s);
+		// 	c++;
+		// 	// console.log(jsonObj);
+
+		// 	rSketch = {};
+		// 	for (let x in jsonObj) {
+		// 		// dir = jsonObj[x]
+		// 		rSketch[x] = [];
+		// 		var html = '<div class="sketchWeek"><a onclick="randomSketch('+(x)+');"><div class="sketchWeekName" title="Load random sketch!">Week '+(x)+'</div></a><div class="sketchWeekHolder">';
+		// 		jsonObj[x].reverse();
+		// 		for(let y in jsonObj[x]){
+		// 			//console.log(jsonObj[x][y].file);
+		// 			html += '<div id="sketch_'+c+'" class="sketch" onclick="loadSketch('+c+')">'+jsonObj[x][y].file.substring(0, jsonObj[x][y].file.length-5);
+		// 			html += '</div>';
+		// 			let s = {};
+		// 			s.fileName = jsonObj[x][y].file;
+		// 			s.code = jsonObj[x][y].code;
+		// 			// s.week = x-38;
+		// 			sketches.push(s);
+		// 			rSketch[x].push(c);
+		// 			c++;
+		// 		}
+		// 		html += '</div></div>';
+		// 		document.getElementById('p5-info-sketches').innerHTML = html+document.getElementById('p5-info-sketches').innerHTML;
+		// 		//console.log(rSketch);
+		// 	}
+
+		// }
+
+		function tidyCode(){
+			var tempCode = js_beautify(editor.getValue(), beautifyOptions);
+			editor.setValue(tempCode, 1);
+			editor.getSession().setUseWorker(false);
+		}
+
+		function resizeEditor(){
+
+		}
+
+
+		// load sketch
+
+		function randomSketch(bin){
+			var rSel = rSketch[bin][Math.floor(Math.random()*rSketch[bin].length)];
+			if(!vSketch.includes(rSel)){
+				loadSketch(rSel);
+			}else if(vSketch.length < rSketch[bin].length){
+				randomSketch(bin);
+			}else if(vSketch.length == rSketch[bin].length){
+				vSketch = []; // start over when done
+			}
+		}
+
+		function showViewed(sketch){
+			document.getElementById('sketch_'+sketch).classList.add("p5-info-sketch-viewed");
+		}
+
+		function loadSketch(sketch){
+			if(psketch == sketch && sketch != 0){
+				sketch = 0;
+			}else if(sketch > sketches.length-1){
+				sketch = 0;
+			}
+
+			if(sketches[sketch].code != undefined){
+				let sels = document.getElementsByClassName('p5-info-sketch-sel')
+				for(var i=0; i<sels.length; i++){
+					sels[i].classList.remove('p5-info-sketch-sel')
+				}
+				if(sketch > 0){
+					document.getElementById('sketch_'+sketch).classList.add("p5-info-sketch-sel");
+				}
+
+				// *** disable print()
+				sketches[sketch].code = sketches[sketch].code.replace(/^\s*print/gm, '//print');
+
+				editor.setValue(sketches[sketch].code, 1)
+				tidyCode(); // make everyone look great!
+				setTimeout(function(){p5varsReset();recompile();}, 200);
+				// window.location.hash = sketch;
+				if(window.location.hash != "#"+sketch){
+					location.replace("#"+sketch);
+				}
+			}
+
+			// if(psketch != 0){
+			// 	showViewed(psketch);
+			// }
+			vSketch.push(sketch);
+			psketch = sketch;
+			// editor.setReadOnly(true);
+		}
+
+		function loadSketchTemplate(){
+			var tempPath = 'includes/templates/p5live_sketch.html?' + currentRevision;
+			var request = new XMLHttpRequest();
+			request.open('GET', tempPath, true);
+			request.send();
+			request.addEventListener('load', function(){
+				let el = document.createElement('html');
+				el.innerHTML = request.responseText;
+				p5frameTemplate = el;
+			});
+		}
+
+		function importSketch(name){
+			var tempPath = name;
+			var request = new XMLHttpRequest();
+			request.open('GET', tempPath, false);
+			request.send();
+			return JSON.parse(request.responseText);
+		}
+
+		function recompile(force){
+			let currline = editor.getSelectionRange().start.row;
+			let currCode = editor.session.getLine(currline);
+			// curPos = editor.getCursorPosition();
+
+			// catch missing {}'s
+			let codeNoComments = removeComments(editor.getValue());
+
+			let cbCount = {
+				l : (codeNoComments.match(/\{/g) || []).length,
+				r : (codeNoComments.match(/\}/g) || []).length
+			}
+			if(cbCount.l == 0 || cbCount.l != cbCount.r){
+				let missingBracket = "'}'";
+				if(cbCount.l < cbCount.r){
+					missingBracket = "'{'";
+				}
+				consoleMessage('Missing ' + missingBracket + '. Find mistake then recompile.', 0);
+				braketError = true;
+				return false;
+			}else{
+				if(braketError){
+					consoleHide();
+					braketError = false;
+				}
+
+			}
+
+			// prevent compile while autocomplete popup visible
+			let acPopup = document.getElementsByClassName('ace_autocomplete')[0];
+			if(acPopup != undefined){
+				if(acPopup.style.display != 'none'){
+					return false;
+				}
+			}
+
+			if((currCode.search(/^\s(?:for|while)(|\s)(\()/) == -1) || forceRecompile || force){
+				if(validCode){
+					if(editor.getValue().indexOf('function setup()') != -1){ // check setup exists
+						// buildSketch(); //
+						updateBackground();
+						buildSketch(force); //
+					}
+				}
+			}
+			forceRecompile = false;
+		}
+
+		function removeComments(code){
+			return code.replace(/\/\*[\s\S]*?\*\/|([^:]|^)\/\/.*$/gm, (_, g1, g2) => Array(_.split('\n').length).join('\n'))
+		}
+
+		function processLibs(code){
+			let sketchTest = code.replace(/(?:\r\n|\r|\n|\t)/g, '');
+			let sketchLoadScriptsRegEx = /(?:loadScripts|libs|scripts)\s+=\s+\[(.*["']\])/
+			let sketchLoadScripts = sketchLoadScriptsRegEx.exec(sketchTest);
+			let scriptsList = [];
+			if(sketchLoadScripts != undefined){
+				sketchLoadScripts = sketchLoadScripts[1].replace(/["']/g, '').replace(/[' '|\]]/g, '');
+				sketchLoadScripts = sketchLoadScripts.split(',');
+
+				for(let i=0; i < sketchLoadScripts.length; i++){
+					if(sketchLoadScripts[i] != ''){
+						scriptsList.push(sketchLoadScripts[i]);
+					}
+				}
+			}
+			return scriptsList;
+		}
+
+		// new technique to avoid accessing p5live_sketch.html sooo many times!
+		function buildSketch(force){
+			// replace single + multiline comments with \n to avoid processing + keep line numbers same
+
+			// grab latest p5vars only before reload! no more interval...
+			if(sketchLoaded && p5f.frameCount != undefined){
+				p5vars.frameCount = p5f.frameCount+1;
+				p5vars.mouseX = p5f.mouseX;
+				p5vars.mouseY = p5f.mouseY;
+			}
+
+
+			let codeNoComments = removeComments(editor.getValue());
+
+			// softCompile
+			if(force == undefined && sketchLoaded){
+				// technique to only update draw if code changed there (= continous background!)
+				let rawLines = editor.session.getLines(0, editor.session.getLength());
+				let drawPos = [];//{};
+				let drawPosSel = -1;
+				let countBrackets = false;
+				let braces = 0;
+				let softFunction = false;
+				let softClass = false;
+
+
+				let allLines = codeNoComments.split('\n');
+
+				// extract all functions and their line number
+				for(let i=0; i<allLines.length; i++){
+
+					// catch function or class
+					if(allLines[i].includes('function ') && !countBrackets){
+							countBrackets = true;
+							let functionName = allLines[i].match(/function ([\w\d]*)\(/)[1].trim();
+							drawPos.push({type:'function', name:functionName, start:i});
+					}else if(allLines[i].includes('class ') && !countBrackets){
+							countBrackets = true;
+							let className = allLines[i].match(/class\s([\w\d]*)/)[1].trim();
+							drawPos.push({type:'class', name:className, start:i});
+					}
+
+					// count {} and mark where class/function ends
+					if(countBrackets){
+						if(allLines[i].includes('{')){
+							braces += (allLines[i].match(/{/g) || []).length;
+						}
+						if(allLines[i].includes('}')){
+							braces -= (allLines[i].match(/}/g) || []).length;
+							if(braces == 0){
+								drawPos[drawPos.length-1].end = i;
+								countBrackets = false;
+							}
+						}
+					}
+				}
+
+				// check all changed positions + if custom function
+				let funName = '';
+				for(let i=0; i<drawPos.length; i++){
+					for(let j=0; j < curPositions.length; j++){
+						let cPos = curPositions[j];
+						if(cPos.row >= drawPos[i].start && cPos.row <= drawPos[i].end){
+							// console.log(drawPos[i].name); // debug where change occured
+							if(drawPos[i].name != 'setup' && drawPos[i].name != 'preload' && drawPos[i].type == 'function'){
+								softFunction = true;
+								drawPosSel = i;
+								funName = drawPos[i].name;
+							}else if(drawPos[i].type == 'class'){
+								softClass = true;
+								drawPosSel = i;
+							}
+						}
+					}
+				}
+
+
+				// if custom function, grab where it's used
+				let functionPos = [];
+				for(let j=0; j<drawPos.length; j++){
+					if(funName == drawPos[j].name){
+						// find lines where drawPos[i].name sits
+						for(let i=0; i<allLines.length; i++){
+							if(allLines[i].includes(drawPos[j].name + '(')){
+								functionPos.push(i);
+							}
+						}
+					}
+				}
+
+				// catch custom functions in preload + setup
+				for(let i=0; i < functionPos.length; i++){
+					let fPos = functionPos[i];
+					for(let j=0; j < drawPos.length; j++){
+						if(fPos >= drawPos[j].start && fPos <= drawPos[j].end){
+							// console.log(drawPos[i].name); // debug where chage occured
+							if(drawPos[j].name == 'setup' || drawPos[j].name == 'preload'){ // && !settings.cocoding.active
+								softFunction = false;
+							}
+						}
+					}
+				}
+
+				// if possible, only overwrite function/class for softCompile
+				if(softClass || softFunction){
+					softCompile(drawPos[drawPosSel].type, drawPos[drawPosSel].name, drawPos[drawPosSel].start, drawPos[drawPosSel].end);
+					return false; // prevent complete rebuild
+				}
+			}
+
+			// hardCompile
+			sketchLoaded = false;
+			let el = p5frameTemplate.cloneNode(true);
+			let iFrameHead = el.getElementsByTagName('head')[0];
+			let iFrameBody = el.getElementsByTagName('body')[0];//el.document.getElementsByTagName('body')[0];
+
+			let scriptsCol = [];
+
+			// load scripts remote vs local
+			for(let i=0; i < includeScripts.length; i++){
+				scriptsCol.push(includeScripts[i].remote);
+			}
+
+			// check loadScripts / libs / scripts;
+			let scriptsList = processLibs(codeNoComments);
+			for(let i=0; i < scriptsList.length; i++){
+				scriptsCol.push(scriptsList[i]);
+			}
+
+			// old way ***
+			for(let sc of scriptsCol){
+				let s = document.createElement('script');
+				s.type = 'text/javascript';
+				s.src = sc;
+				// s.async = false;
+				iFrameHead.appendChild(s);
+			}
+
+			// load sketch
+			let s = document.createElement('script');
+			s.type = 'text/javascript';
+			let sketchCode = editor.getValue();
+
+			// break infinite loops
+			if(!sketchCode.match(/(\/\/).*(no.*protect)/g)){
+				sketchCode = loopBreaker(sketchCode).code;
+			}
+
+			let updateVars = '\npmouseX=' + p5vars.mouseX + ';\npmouseY=' + p5vars.mouseY + ';\nmouseX=' + p5vars.mouseX + ';\nmouseY=' + p5vars.mouseY + ';\nframeCount=' + p5vars.frameCount + ';\n';
+			let codeSetup = addCode(sketchCode, updateVars, 'setup', 'bottom');
+
+			let fullCode = p5custom.value + codeSetup + 'new p5(); sketchStatus();';
+
+			// let sLoader = 'loadjs(' + JSON.stringify(scriptsCol) + ', {success: function() {pingReady("p5Main", ' + JSON.stringify(fullCode) + '); },async: false});';
+
+			// s.innerHTML = sLoader;
+			s.innerHTML = fullCode; // *** old way
+			p5frame.srcdoc = el.innerHTML;
+
+			p5frame.onload = function(){
+				p5f.document.body.appendChild(s);
+			}
+
+		}
+
+		// compiling code after promise of loaded libs!
+		function pongReady(scriptName, scriptCode, scriptCallback){
+				let s = document.createElement('script');
+				s.type = 'text/javascript';
+				s.id = scriptName;
+				s.innerHTML = scriptCode;
+				if(p5f.document.getElementById(scriptName) == null){
+					p5f.document.head.appendChild(s);
+				}else{
+					p5f.document.getElementById(scriptName).innerHTML = scriptCode;
+				}
+
+				if(scriptCallback){
+					scriptCallback();
+				}
+		}
+
+		// softCompile function or class changes
+		function softCompile(codeType, codeName, codeStart, codeEnd){
+			let curCodeTemp = '';
+			if(codeType == 'function'){
+				curCodeTemp = editor.session.getLines(codeStart, codeEnd).join('\n');
+			}else if(codeType == 'class'){
+				curCodeTemp = codeName + ' = class {' + editor.session.getLines(codeStart+1, codeEnd).join('\n');
+			}
+			let s = document.createElement('script');
+			s.type = 'text/javascript';
+
+			// break infinite loops
+			if(!editor.getValue().match(/(\/\/).*(no.*protect)/g)){
+				curCodeTemp = loopBreaker(curCodeTemp).code;
+			}
+
+			s.innerHTML = curCodeTemp;
+			p5f.document.head.appendChild(s);
+		}
+
+
+		// pause sketch on demand
+		function pauseSketch(){
+			if(sketchLoaded){
+				paused = !paused;
+				if(paused){
+					p5f.noLoop();
+				}else{
+					p5f.loop();
+				}
+			}
+		}
+
+
+
+		/* EDITOR KEY-CMDS */
+
+		var map = [];
+		window.onkeydown = function(event) {
+			map[event.keyCode] = event.type == 'keydown';
+
+			if(map[16] && map[17]){
+				//addSnippet(event.key);
+				//event.preventDefault();
+			}else if(!map[16] && map[17]){ // check !shift and √control
+				if(event.keyCode == 69){ // e = editor toggle
+					toggleInfo();
+					event.preventDefault();
+				}else if(event.keyCode == 67){ // c = editor toggle
+					cursorToggle();
+					event.preventDefault();
+				}else if(event.keyCode == 70){ // f = fullscreen
+					fullscreenToggle();
+					event.preventDefault();
+				}else if(event.keyCode == 13){ // enter = recompile
+					forceRecompile = true;
+					recompile();
+					event.preventDefault();
+				}else if(event.keyCode == 80){ // p = pause
+					pauseSketch();
+					event.preventDefault();
+				}else if(event.keyCode == 83){ // s = save PNG
+					savePNG();
+					event.preventDefault();
+				}else if(event.key == 'i'){
+					pop720(); // IG window size
+				}
+			}
+
+		}
+
+		window.onkeyup = function(event) {
+			map[event.keyCode] = event.type == 'keydown';
+		}
+
+		p5code.onkeyup = function(event) {
+			//map[event.keyCode] = event.type == 'keydown';
+			// if(!settings.cocoding.active){
+			// 	localStorage[settings.fileName] = editor.getValue();
+			// }
+			checkErrors();
+		};
+
+		p5code.onkeydown = function(event) {
+			map[event.keyCode] = event.type == 'keydown';
+
+			if(!map[16] && map[17]){ // check for !shift + √control
+				if(event.keyCode == 84){ // t = tidy code
+					tidyCode();
+					event.preventDefault();
+				}
+			}
+		}
+
+		p5code.onkeyup = function(event) {
+			map[event.keyCode] = event.type == 'keydown';
+			// if(!settings.cocoding.active){
+			// 	localStorage[settings.fileName] = editor.getValue();
+			// }
+			checkErrors();	// ** maybe turn back on>?
+		};
+
+		function checkErrors(){
+			clearTimeout(errorTimer);
+			errorTimer = setTimeout(function(){checkErrorsWorker();}, 500);
+		}
+
+		function checkErrorsWorker(){
+			var annos = editor.getSession().getAnnotations();
+			var errorsFound = false;
+			for(var i=0; i < annos.length; i++){
+				if(annos[i].type == "error"){
+					errorsFound = true;
+				}
+			}
+			if(errorsFound){
+				validCode = false;
+				checkErrors();
+			}else{
+				clearTimeout(errorTimer);
+				validCode = true;
+				var cLen = editor.getValue();
+				if(cLen != pLen){
+					pLen = cLen;
+					recompile();
+				}
+			}
+		}
+
+
+		/* COMPILE CODE */
+
+		// function recompile(){
+		// 	updateBackground();
+		// 	buildSketch(); //
+		// 	forceRecompile = false;
+		// }
+
+
+		function updateBackground(){
+			let bgReg = /background\(([^)]+)\)/;
+			let nonComments = editor.getValue();
+			nonComments = nonComments.replace(/\s*\/\/.*\n/g, '\n').replace(/\s*\/\*[\s\S]*?\*\//g, '');
+			let bgMatches = bgReg.exec(nonComments);
+			if(bgMatches != null){
+				newBG = '';
+				if(bgMatches[1].includes('#')){
+					newBG = bgMatches[1].replace(/["']/g, '');
+				}else{
+					let cols = bgMatches[1].split(',');
+					if(cols.length > 2){
+						newBG = rgb2hex(cols[0].trim(), cols[1].trim(), cols[2].trim());
+					}else{
+						newBG = rgb2hex(cols[0].trim(), cols[0].trim(), cols[0].trim())
+					}
+				}
+				if(sketchLoaded){
+					p5f.document.body.style.background = newBG;
+				}
+				p5frame.style.background = newBG;
+			}
+		}
+
+		function rgb2hex(red, green, blue) {
+			let rgb = blue | (green << 8) | (red << 16);
+			return '#' + (0x1000000 + rgb).toString(16).slice(1)
+		}
+
+		function loadScripts(elm){
+			if(settings.debugMode){console.log(settings.scripts);}
+			for(let i=0; i < settings.scripts.length; i++){
+				elm.appendChild(loadScript(settings.scripts[i]));
+			}
+		}
+
+
+		function loadScript(scriptPath){
+			var ps = document.createElement('script');
+			ps.type = 'text/javascript';
+			ps.src = scriptPath;
+			return ps;
+		}
+
+		function addCode(codeBase, codeInsert, funName, codePos){
+			var tempCode, tempPos = addPosition(codeBase, funName);
+			if(codePos === 'bottom'){
+				tempCode = [codeBase.slice(0, tempPos[1]), ""+codeInsert+"\n", codeBase.slice(tempPos[1])].join('');
+			}else if(codePos === 'top'){
+				tempCode = [codeBase.slice(0, tempPos[0]), codeInsert+"", codeBase.slice(tempPos[0])].join('');
+			}
+			return tempCode;
+		}
+
+		// grab start/end of function, modded for position only
+		// https://stackoverflow.com/a/49240267/10885535
+		function addPosition(content, functionName) {
+			// Find function
+			const indexOfFunc = content.indexOf(`function ${functionName}`);
+
+			if (indexOfFunc < 0) {
+				return content;
+			}
+
+			const openingBrace = content.indexOf('{', indexOfFunc);
+
+			const startPos = openingBrace + 1;
+			let endPos = startPos;
+			let bracesToBalance = 1;
+
+			while (true) {
+				if (content[endPos] === '{') {
+					bracesToBalance++;
+				} else if (content[endPos] === '}') {
+					bracesToBalance--;
+					if (bracesToBalance === 0) break;
+				}
+				endPos++;
+			}
+
+			return [startPos, endPos];
+		};
+
+
+
+
+		// loop/noLoop on window blur
+
+		window.onblur = function () {
+			if(sketchLoaded){
+				if(document.activeElement !== p5frame){
+					p5f.noLoop();
+				}
+			}
+		}
+		window.onfocus = function () {
+			if(sketchLoaded){
+				p5f.loop();
+			}
+		}
+
+
+		// constant frameCount (great for recompiling)
+		var fcTimer = setInterval(function(){
+			if(sketchLoaded && p5f.frameCount != undefined){
+				p5vars.frameCount = p5f.frameCount;
+				p5vars.mouseX = p5f.mouseX;
+				p5vars.mouseY = p5f.mouseY;
+			}
+		}, 100);
+
+		function p5varsReset(){
+			p5vars = {'frameCount':0, 'mouseX':0, 'mouseY':0};
+		}
+
+
+
+		/* TOGGLE EDITOR + [canvas] + MENU */
+
+		// hide/show editor
+		function editorToggle(){
+			if(p5editor.style.visibility != 'visible'){
+				p5editor.style.visibility = 'visible';
+			}else{
+				p5editor.style.visibility = 'hidden';
+			}
+			editorToggleUpdate();
+		}
+
+		function editorToggleUpdate(){
+			if(p5editor.style.visibility != 'visible'){
+				const canv = document.querySelector('canvas');
+				editor.blur();
+			}else{
+				editor.focus();
+			}
+		}
+
+
+
+		/*	EXPORT ASSETS	*/
+
+		function savePNG(){
+			if(sketchLoaded){
+				p5f.save('P5L_SANDBOX_' + timeStamp() + '.png');
+			}
+		}
+
+		function timeStamp(){
+			return (new Date()).toISOString().replace(/[^0-9]/g, '').slice(0, -3);
+		}
+
+		function exportJSON(jsonData, jsonFilename){
+		    const filename = jsonFilename;
+		    const jsonStr = JSON.stringify(jsonData, undefined, 2);
+
+		    let element = document.createElement('a');
+		    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(jsonStr));
+		    element.setAttribute('download', filename);
+
+		    element.style.display = 'none';
+		    document.body.appendChild(element);
+
+		    element.click();
+
+		    document.body.removeChild(element);
+		}
+
+		// export single sketch to JSON
+		function exportSketch(){
+			var jsonExport = {
+				"version": "1.3.4",
+  				"revision": 37,
+				'count':{'sketches':1, 'folders':0},
+				'structure':[{'type':'sketch'}]
+			};
+			// jsonExport.sketches = [];
+			jsonExport.structure[0].name = sketches[psketch].fileName;
+			jsonExport.structure[0].code = editor.getValue();
+			// jsonExport.sketches.push({'sketchName':sketches[psketch].fileName, 'sketchCode':editor.getValue()});
+			exportJSON(jsonExport, 'P5LSB_'+sketches[psketch].fileName);
+		}
+
+
+
+		/* iFrame magic */
+
+		// get mouse clicks on top
+		// initially inspired from here:
+		// https://stackoverflow.com/a/44143731/10885535
+		window.addEventListener('mousemove', passMouseClick);
+		window.addEventListener('mouseup', passMouseClick);
+		window.addEventListener('mousedown', passMouseClick);
+
+
+		let pass = false;
+		function passMouse(event){
+			pass = !pass;
+			if (pass) {
+				processMouse(event);
+			}
+		};
+
+		function passMouseClick(event){
+			processMouse(event);
+		};
+
+		let mouseFields = ['altKey', 'clientX', 'clientY', 'composed', 'ctrlKey', 'isTrusted', 'layerX', 'layerY', 'metaKey', 'movementX', 'movementY', 'offsetX', 'offsetY', 'pageX', 'pageY', 'screenX', 'screenY', 'shiftKey', 'x', 'y', 'button', 'buttons', 'relatedTarget', 'region'];
+
+		function getOpts(event, fields){
+			let opts = {};
+				fields.forEach(function(f) {
+					if (f in event) {
+						opts[f] = event[f];
+					}
+				});
+			return opts;
+		}
+
+		function processMouse(event){
+			let opts = getOpts(event, mouseFields);
+			let copy = new MouseEvent(event.type, event);
+
+			if(p5editor.style.visibility == 'visible'){
+				p5f.dispatchEvent(copy);
+			}
+
+
+			// prevent drag+drop+shift of code, while mouseDragging visuals
+			if(event.type == 'mousedown'){
+				editor.setReadOnly(true);
+			}else if(event.type == 'mouseup'){
+				editor.setReadOnly(false);
+			}
+
+		}
+
+
+		// pass keys on down
+		// tips: https://stackoverflow.com/questions/596481/
+		window.addEventListener('keydown', sendKey);
+		window.addEventListener('keyup', sendKey);
+
+		let keyFields = ['altKey', 'bubbles', 'cancelBubble', 'cancelable', 'charCode', 'code', 'composed', 'ctrlKey', 'isTrusted', 'key', 'keyCode', 'location', 'metaKey', 'repeat', 'returnValue', 'shiftKey', 'type', 'which'];
+
+
+		function sendKey(event){
+			let opts = getOpts(event, keyFields);
+			let copy = new KeyboardEvent(event.type, event);
+
+			if(p5editor.style.visibility != 'visible'){
+				p5f.dispatchEvent(copy);
+			}
+		}
+
+
+
+		/*	MISC */
+		function pop720(){
+			window.open (window.location.href, 'mywindow', 'menubar=0,resizable=0,width=720,height=748');
+		}
+
+		function showLoader(){
+			loader.style.display = 'block';
+		}
+
+		function hideLoader(){
+			loader.style.display = 'none';
+		}
+
+		/* View in fullscreen */
+		function openFullscreen() {
+			var elem = document.documentElement;
+			if (elem.requestFullscreen) {
+				elem.requestFullscreen();
+			} else if (elem.mozRequestFullScreen) { /* Firefox */
+				elem.mozRequestFullScreen();
+			} else if (elem.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+				elem.webkitRequestFullscreen();
+			} else if (elem.msRequestFullscreen) { /* IE/Edge */
+				elem.msRequestFullscreen();
+			}
+		}
+
+		/* Close fullscreen */
+		function closeFullscreen() {
+			if (document.exitFullscreen) {
+				document.exitFullscreen();
+			} else if (document.mozCancelFullScreen) { /* Firefox */
+				document.mozCancelFullScreen();
+			} else if (document.webkitExitFullscreen) { /* Chrome, Safari and Opera */
+				document.webkitExitFullscreen();
+			} else if (document.msExitFullscreen) { /* IE/Edge */
+				document.msExitFullscreen();
+			}
+		}
+
+
+
+
+	</script>
+
+	<script type="text/javascript" src="includes/js/dropzone.js"></script>
+	<script type="text/javascript">
+		//var myDropzone = new Dropzone("#p5-frame-cover", { url: "../upload/upload.php"});
+		var divDrop = document.getElementById('p5-drop');
+		var warned = false;
+		new Dropzone(document.body, {
+		  url: '/blah',
+		  autoProcessQueue:false,
+		  clickable: false,
+		  maxFiles: 5,
+		  acceptedFiles:'.json',
+		   accept: function(file, done) {
+		        var reader = new FileReader();
+		        reader.addEventListener("loadend", function(event) {
+		        	//console.log(event.target.result);
+		        	if(event.target.result){
+		        		let ts = JSON.parse(event.target.result);
+		        		if(ts.hasOwnProperty('structure') && ts.structure.length == 1){
+
+		        			var tempCode = js_beautify(ts.structure[0].code, beautifyOptions);
+							editor.setValue(tempCode, 1);
+							editor.getSession().setUseWorker(false);
+							setTimeout(function(){p5varsReset();recompile();}, 200);
+		        			// console.log();
+		        		}
+		        	}
+		        });
+		        // ;
+		        let d = reader.readAsText(file);
+		        //
+		    },
+		  init: function() {
+		    this.on("success", function(file, responseText) {
+		    	divDrop.style.display = "none";
+		    });
+		    this.on("dragenter", function(file, responseText) {
+		    	divDrop.style.display = "block";
+		    	warned = false;
+		    });
+		    this.on("dragleave", function(file, responseText) {
+		    	divDrop.style.display = "none";
+		    });
+		    this.on("addedfile", function(file, responseText) {
+
+		    	divDrop.style.display = "none";
+		    });
+		    this.on("drop", function(file, responseText) {
+
+		    	divDrop.style.display = "none";
+		    });
+		    this.on("dragover", function(file, responseText) {
+		    	divDrop.style.display = "block";
+		    });
+		    this.on("error", function(file, responseText) {
+
+		    	this.removeFile(file);
+		    });
+		  },
+
+
+
+		});
+	</script>
+</body>
+</html>
